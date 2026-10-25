@@ -1,0 +1,26 @@
+# Node dependencies
+node_modules/
+.npm/
+
+# Build artifacts
+dist/
+build/
+*.o
+*.a
+*.dylib
+*.so
+bin/
+engine/bin/
+engine/build/
+engine/physarum_chip
+engine/test_runner
+
+# Temp / Cache
+.DS_Store
+*.log
+.vite/
+coverage/
+
+# Scratch & IDE
+.vscode/
+.idea/

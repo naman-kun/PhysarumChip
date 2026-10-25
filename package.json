@@ -1,0 +1,28 @@
+{
+  "name": "physarum-chip",
+  "version": "1.0.0",
+  "description": "Educational CPU-chip floorplanning and interconnect-routing simulator",
+  "private": true,
+  "scripts": {
+    "build:engine": "make -C engine all",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "make build",
+    "test:engine": "make -C engine test",
+    "test:bridge": "node server/test_bridge.js",
+    "test:e2e": "node tests/e2e_verification.js",
+    "test": "make test",
+    "start": "node server/src/index.js",
+    "dev:server": "node server/src/index.js",
+    "dev:frontend": "cd frontend && npm run dev"
+  },
+  "keywords": [
+    "physarum",
+    "cpu-floorplanning",
+    "interconnect-routing",
+    "c11",
+    "dijkstra",
+    "flow-adaptation"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
