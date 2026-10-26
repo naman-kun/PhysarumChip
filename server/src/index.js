@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const ENGINE_PATH = path.resolve(__dirname, '../../engine/bin/physarum_chip');
+const ENGINE_PATH = process.env.ENGINE_PATH || path.resolve(__dirname, '../../engine/bin/physarum_chip');
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -72,8 +72,10 @@ function invokeEngine(modeFlag, payload = null, timeoutMs = 60000) {
   });
 }
 
+const apiRouter = express.Router();
+
 // Health check endpoint
-app.get('/api/health', async (req, res) => {
+apiRouter.get('/health', async (req, res) => {
   try {
     const versionRes = await invokeEngine('--version', null, 5000);
     res.json({
@@ -87,7 +89,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Architecture generation endpoint
-app.post('/api/architecture/generate', async (req, res) => {
+apiRouter.post('/architecture/generate', async (req, res) => {
   try {
     const config = req.body.config || req.body;
     const result = await invokeEngine('--generate-arch', config);
@@ -101,7 +103,7 @@ app.post('/api/architecture/generate', async (req, res) => {
 });
 
 // Placement validation endpoint
-app.post('/api/architecture/validate-placement', async (req, res) => {
+apiRouter.post('/architecture/validate-placement', async (req, res) => {
   try {
     const result = await invokeEngine('--validate-placement', req.body);
     if (!result.success) {
@@ -114,7 +116,7 @@ app.post('/api/architecture/validate-placement', async (req, res) => {
 });
 
 // Physarum adaptive flow routing endpoint
-app.post('/api/route/physarum', async (req, res) => {
+apiRouter.post('/route/physarum', async (req, res) => {
   try {
     const result = await invokeEngine('--route-physarum', req.body, 120000);
     if (!result.success) {
@@ -127,7 +129,7 @@ app.post('/api/route/physarum', async (req, res) => {
 });
 
 // Dijkstra baseline routing endpoint
-app.post('/api/route/dijkstra', async (req, res) => {
+apiRouter.post('/route/dijkstra', async (req, res) => {
   try {
     const result = await invokeEngine('--route-dijkstra', req.body, 60000);
     if (!result.success) {
@@ -140,7 +142,7 @@ app.post('/api/route/dijkstra', async (req, res) => {
 });
 
 // Comparison endpoint
-app.post('/api/route/compare', async (req, res) => {
+apiRouter.post('/route/compare', async (req, res) => {
   try {
     const result = await invokeEngine('--compare', req.body, 180000);
     if (!result.success) {
@@ -153,7 +155,7 @@ app.post('/api/route/compare', async (req, res) => {
 });
 
 // Benchmark run endpoint for reproducibility report
-app.post('/api/benchmark', async (req, res) => {
+apiRouter.post('/benchmark', async (req, res) => {
   try {
     const gen = await invokeEngine('--generate-arch', req.body.config || {});
     if (!gen.success) return res.status(400).json(gen);
@@ -178,6 +180,10 @@ app.post('/api/benchmark', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+// Mount router under both /api and root so all rewrite patterns work
+app.use('/api', apiRouter);
+app.use(apiRouter);
 
 // Serve static frontend build if present
 const FRONTEND_DIST = path.resolve(__dirname, '../../frontend/dist');

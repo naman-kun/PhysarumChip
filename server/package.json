@@ -4,6 +4,7 @@
   "description": "Thin Node.js + Express bridge for PhysarumChip C11 Engine",
   "main": "src/index.js",
   "scripts": {
+    "build": "make -C ../engine all || true",
     "start": "node src/index.js",
     "dev": "node src/index.js",
     "test": "node --test"

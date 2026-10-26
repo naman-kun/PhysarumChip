@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "server": {
+      "root": "server",
+      "framework": "express",
+      "entrypoint": "src/index.js",
+      "buildCommand": "make -C ../engine all || true"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "server"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
+}
