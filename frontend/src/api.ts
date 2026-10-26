@@ -1,6 +1,6 @@
 import { Architecture, ArchConfig, RoutingParams, RoutingResults, ComparisonReport } from './types';
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
 
 export async function checkHealth() {
   const res = await fetch(`${BASE_URL}/health`);
